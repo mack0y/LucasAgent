@@ -1,0 +1,34 @@
+# Supabase MCP Server Configuration
+# Copy this to your ~/.hermes/config.yaml under mcp_servers:.
+#
+# The anon key below is the M&E Fresh Eggs publishable key.
+# It can also be used for the MCP server Authorization header.
+
+# mcp_servers:
+#   supabase:
+#     url: "https://mcp.supabase.com/mcp?project_ref=npohyeqnaltpqzmmlmej"
+#     headers:
+#       Authorization: "Bearer sb_publishable_QlM4RGEizMrdybxn75T2gA_CYIx7kGi"
+#     timeout: 180
+#     connect_timeout: 60
+
+# Available MCP Tools (once connected):
+#
+# | Tool | Description | Type |
+# |------|-------------|------|
+# | mcp_M_E_Fresh_Eggs_execute_sql | Raw SQL (DDL + DML) | Read/Write |
+# | mcp_M_E_Fresh_Eggs_apply_migration | Apply DDL migration | Write |
+# | mcp_M_E_Fresh_Eggs_list_tables | List all tables | Read |
+# | mcp_M_E_Fresh_Eggs_get_project_url | Get API URL | Read |
+# | mcp_M_E_Fresh_Eggs_get_publishable_keys | Get API keys | Read |
+# | mcp_M_E_Fresh_Eggs_search_docs | Search Supabase docs | Read |
+# | mcp_M_E_Fresh_Eggs_get_advisors | Security/performance advisors | Read |
+# | mcp_M_E_Fresh_Eggs_get_logs | Get logs by service | Read |
+# | mcp_M_E_Fresh_Eggs_list_edge_functions | List edge functions | Read |
+# | mcp_M_E_Fresh_Eggs_list_extensions | List extensions | Read |
+# | mcp_M_E_Fresh_Eggs_generate_typescript_types | Generate TS types | Read |
+
+# Notes:
+# - execute_sql runs raw SQL and does NOT enforce RLS. Use carefully.
+# - For DDL operations, prefer apply_migration which is safer
+# - If connection fails, restart gateway: hermes gateway restart

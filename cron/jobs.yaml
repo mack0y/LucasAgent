@@ -1,0 +1,54 @@
+# LucasAgent — Cron Job Definitions
+#
+# Recreate these on the new host via the cronjob tool or hermes cron add.
+#
+# IMPORTANT: The 1% Daily Revenue Cut cron computes PHT date via SQL:
+#   SELECT (CURRENT_DATE + INTERVAL '8 hours')::date::text as pht_today
+# Never use CURRENT_DATE alone — it returns UTC, wrong for PHT 12AM-8AM.
+
+# === 1% Daily Revenue Cut ===
+# job_id: 02aa52a89e5d
+# schedule: 0 21 * * * (every 9:00 PM PHT)
+# deliver: origin (back to group chat)
+# enabled: true
+#
+# Prompt:
+# Execute the 1% Daily Revenue Cut for M&E Fresh Eggs.
+# Steps:
+# 1. Get PHT today's date: SELECT (CURRENT_DATE + INTERVAL '8 hours')::date::text as pht_today
+# 2. Calculate today's total sales: SELECT SUM(total_amount) FROM sales WHERE sale_date = '{pht_today}'
+# 3. cutAmount = Math.round(revenue * 0.01 * 100) / 100
+# 4. Check if already recorded: operational_funds where fund_date = pht_today AND description = '1% Daily Revenue Cut'
+# 5. If exists -> stop. Report 'Already recorded today'.
+# 6. If cutAmount <= 0 -> stop. Report 'No sales today'.
+# 7. INSERT INTO operational_funds (amount, description, fund_date) VALUES (cutAmount, '1% Daily Revenue Cut', pht_today)
+# 8. Report: revenue, cut amount, recorded or skipped.
+
+# === M&E Daily Sales Report ===
+# job_id: de60bc545060
+# schedule: 0 8 * * * (every 8:00 AM PHT)
+# deliver: origin
+# skills: daily-reporting
+#
+# Prompt: Generate a presentable daily sales report for M&E Fresh Eggs. Use MCP SQL to fetch sales, inventory, and deliveries for today.
+
+# === M&E Health Check ===
+# job_id: c2b0812e16f5
+# schedule: 0 */2 * * * (every 2 hours)
+# deliver: local
+# script: me_health_check.py
+# no_agent: true
+
+# === M&E Weekly Trend Report ===
+# job_id: ebb091eaad88
+# schedule: 0 9 * * 1 (every Monday 9AM)
+# deliver: origin
+# model: openrouter/owl-alpha
+# Prompt: Generate a clean weekly trend report for M&E Fresh Eggs comparing this week vs last week.
+
+# === M&E All Data Sync ===
+# job_id: 21edf0586dca
+# schedule: */5 * * * * (every 5 minutes)
+# deliver: local
+# script: me_sync_and_verify.py
+# no_agent: true
