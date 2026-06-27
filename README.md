@@ -9,32 +9,41 @@ This repo contains the **complete agent configuration, skills, memory, and opera
 **Not included here:** The web app code (React/Supabase schema) — that lives in [mack0y/M-EFresheggs](https://github.com/mack0y/M-EFresheggs).
 
 ## 🏗️ Architecture
+## 🔒 Scope: M&E Fresh Eggs ONLY
 
-```
+**This agent (GC1) is exclusively for the M&E Fresh Eggs egg business.**
+
+| In Scope | Out of Scope |
+|----------|--------------|
+| 🥚 Sales input | ❌ TrendWire |
+| 📦 Deliveries | ❌ Other GCs' data |
+| 💰 Expenses & Funds | ❌ General queries |
+| 📊 Reports & Analytics | ❌ Web app code changes |
+| 🏪 Inventory | ❌ Non-M&E projects |
+
+**Mixed projects = NEVER.** All skills in this repo serve one business: M&E Fresh Eggs.
+
+---
+
+## 🏗️ Architecture
+
 LucasAgent (this repo)
 ├── README.md                    ← You're reading this
-├── BOOTSTRAP.md                 ← Complete migration guide
-├── skills/                      ← Agent skills (business logic)
-│   ├── me-sales-input/
-│   ├── me-delivery-input/
-│   ├── me-fresh-eggs-harness/
-│   └── daily-reporting/
+├── BOOTSTRAP.md                 ← Complete migration guide (for new hosts)
+├── skills/                      ← Agent skills (all M&E Fresh Eggs business logic)
+│   ├── me-sales-input/          ← Sale recording + timezone fix
+│   ├── me-delivery-input/       ← Delivery batch input
+│   ├── me-fresh-eggs-harness/   ← Agentic harness + OWL/GC delegation
+│   ├── supabase-subagent-access/ ← MCP + REST patterns for Supabase
+│   └── daily-reporting/         ← Daily report generation
 ├── memory/                      ← Agent persistent memory
-│   └── agent_memory.md
+│   └── agent_memory.md          ← All memory entries
 ├── cron/                        ← Cron job definitions
-│   ├── daily_report.yaml
-│   ├── revenue_cut.yaml
-│   ├── health_check.yaml
-│   └── weekly_trend.yaml
+│   └── jobs.yaml                ← All 5 scheduled tasks
 ├── config/
-│   ├── config.yaml.example      ← Hermes config template
-│   └── mcp_servers.yaml         ← MCP server config
-├── scripts/
-│   ├── record_sale.py
-│   ├── sync_memory.py
-│   └── health_check.py
+│   └── mcp_servers.yaml         ← Supabase MCP server config
 └── references/
-    └── agentic_harness.md       ← Full harness architecture doc
+    └── agentic_harness.md       ← Full harness architecture + escalation ladder
 ```
 
 ## 🚀 Quick Start (New Host)
