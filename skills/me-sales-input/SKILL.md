@@ -221,6 +221,8 @@ DELETE /rest/v1/table?or=(id.eq.uuid1,id.eq.uuid2,id.eq.uuid3)
 - **Always verify:** Every sale/delete/update must be followed by a verifier subagent pass before reporting to user.
 - **Live state only:** The verifier must query PHT date via `SELECT (CURRENT_DATE + INTERVAL '8 hours')::date::text as pht_today` and fetch current inventory. It must NEVER rely on hardcoded pre-insert dates or inventory quantities passed in context.
 - **Verdict on re-verified state:** If sale record exists and inventory deduction matches the operation, report `Validation Status: pass`. If not, report fail and stop for correction.
+- **User command exact-match (critical):** Verifier must fetch the matched sale record(s) and confirm each row matches the exact user request: same `egg_size_id`, same `quantity`, same `unit`, and same `total_amount` against `price_settings`. Any mismatch → fail immediately.
+- **No silent corrections:** If the verifier finds a mismatch, it must report the exact diverging row(s) and stop. The operator must correct them; the verifier must not assume partial correctness.
 - **Retry pattern:** Failure → fix → re-spawn verifier → loop until pass.
 
 ## References
