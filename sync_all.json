@@ -1,0 +1,15 @@
+{
+  "synced": false,
+  "source": {
+    "path": "BOOTSTRAP.md",
+    "length": 6792,
+    "sha256": "416c9d4d2cce34d0793aa2e0ba901b371a2e08a26f1044cc2bf3d9f850eff3cc"
+  },
+  "derived": {},
+  "target_for_compare": {
+    "length": 6792,
+    "sha256": "416c9d4d2cce34d0793aa2e0ba901b371a2e08a26f1044cc2bf3d9f850eff3cc"
+  },
+  "match_matrix": {},
+  "note": "Mismatch detected."
+}

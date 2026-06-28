@@ -37,7 +37,7 @@ Replicates the SalesLog.jsx logic from https://mack0y.github.io/M-EFresheggs/ as
 When the message starts with `-sale`, skip straight to parsing — no conversation context, no chit-chat. Parse → check stock → confirm → insert. Clean and fast.
 
 **Multi-sale in one message:** If multiple sizes are listed in one `-sale` command, insert each as a separate sale and summarize totals.
-`~/.hermes/hermes-agent/plugins/m-e-commands/__init.py__`
+`C:/Users/Maria101/AppData/Local/hermes/skills/me-sales-input/`
 
 Without the plugin, the gateway returns "Unknown command /sale" before the message reaches the agent. Install via:
 ```bash
