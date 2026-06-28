@@ -2,6 +2,7 @@
 
 > This file mirrors what the agent's persistent memory should contain.
 > Load this into the agent via the `memory` tool after migration.
+> Last Supabase sync: 2026-06-29 ~07:00 PHT. Last verification loop: per-task subagent verification active since 2026-06-28 20:00 PHT. Agent identity restores as-is with this repo as self-backup.
 
 ---
 
@@ -18,7 +19,6 @@ Rules: use live Supabase data, no hallucinations, no extra commentary, only what
 - **Name:** Maria (Flak)
 - **Role:** M&E Fresh Eggs PM (Cebu, Philippines, PHT/UTC+8)
 - **Supervisor pattern:** OWL = orchestrator, delegates to GC agents
-- **Budget:** flash default, pro for complex tasks
 - **Preferences:** Concise, direct, emoji-friendly. Self-corrects, no hallucinations.
 - **Platform:** Telegram (group: M&E Fresh Eggs)
 
@@ -30,11 +30,10 @@ Only execute sales when message starts with `-sale`. Do NOT process sales from p
 
 ---
 
-## Model Budget
+## Model Config
 
-- **Default:** openrouter/free or deepseek/deepseek-v4-flash
-- **Complex tasks:** deepseek-v4-pro via OpenRouter
-- **Never waste pro on simple queries**
+- **Provider:** nous
+- **Default:** stepfun/step-3.7-flash:free
 
 ---
 
@@ -84,7 +83,7 @@ Affected tables: sales, deliveries, expenses, spoilage, operational_funds.
 | ID | Name | Phone | Notes |
 |----|------|-------|-------|
 | 1 | Lilanie Fernandez-Robert | 09668791926 | 2 times per week delivery |
-| 2 | renren | +639762489371 | monday and friday - Pardo |
+| 2 | renren | +639****9371 | monday and friday - Pardo |
 
 ---
 
@@ -103,11 +102,10 @@ Affected tables: sales, deliveries, expenses, spoilage, operational_funds.
 
 | Job | Schedule | Job ID |
 |-----|----------|--------|
-| 1% Daily Revenue Cut | `0 21 * * *` | 02aa52a89e5d |
-| Daily Sales Report | `0 8 * * *` | de60bc545060 |
-| Health Check | `0 */2 * * *` | c2b0812e16f5 |
-| Weekly Trend Report | `0 9 * * 1` | ebb091eaad88 |
-| Data Sync | `*/5 * * * *` | 21edf0586dca |
+| 1% Daily Revenue Cut | `0 21 * * *` | 542d5b031dee |
+| Daily Sales Report | `0 8 * * *` | 0c0abb5d30b4 |
+| Weekly Trend Report | `0 9 * * 1` | 0ed98d59c714 |
+| Daily Self-Audit Report | `0 22 * * *` | 8bfa5438241c |
 
 ---
 
@@ -131,3 +129,5 @@ Affected tables: sales, deliveries, expenses, spoilage, operational_funds.
 8. NO HALLUCINATED SALES — only insert what user explicitly states
 9. NO DUPLICATES — check within conversation before inserting
 10. tray_size NULL for piece sales
+11. **Verification loop:** After every action, spawn backend verifier subagent; no report to user until verification passes
+12. **Model drift:** Default provider is `nous`, model is `stepfun/step-3.7-flash:free`; do not use openrouter defaults in verifier/cron configs

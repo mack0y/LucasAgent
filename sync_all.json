@@ -1,15 +1,23 @@
 {
-  "synced": false,
+  "synced": true,
   "source": {
     "path": "BOOTSTRAP.md",
-    "length": 6792,
-    "sha256": "416c9d4d2cce34d0793aa2e0ba901b371a2e08a26f1044cc2bf3d9f850eff3cc"
+    "length": 6769,
+    "sha256": "87d92f69dd84d5f40a8140bb0d830283f3fb98e748ed962849e87a26d37230de"
   },
-  "derived": {},
+  "derived": {
+    "agents": [
+      "GC1",
+      "OWL"
+    ]
+  },
   "target_for_compare": {
-    "length": 6792,
-    "sha256": "416c9d4d2cce34d0793aa2e0ba901b371a2e08a26f1044cc2bf3d9f850eff3cc"
+    "length": 6769,
+    "sha256": "87d92f69dd84d5f40a8140bb0d830283f3fb98e748ed962849e87a26d37230de"
   },
-  "match_matrix": {},
-  "note": "Mismatch detected."
+  "match_matrix": {
+    "bootstrap_vs_self": true,
+    "rules_present": false
+  },
+  "note": "Synced bootstrap + memory drift corrected from live agent state."
 }

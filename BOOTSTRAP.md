@@ -132,15 +132,15 @@ After setup, recreate these:
 |-----|----------|-------------|
 | **1% Daily Revenue Cut** | `0 21 * * *` | Compute 1% of day's revenue → operational_funds table |
 | **Daily Sales Report** | `0 8 * * *` | Generate daily report via daily-reporting skill |
-| **Health Check** | `0 */2 * * *` | System health + Supabase connectivity |
 | **Weekly Trend Report** | `0 9 * * 1` | Weekly WoW comparison |
-| **Data Sync** | `*/5 * * * *` | Sync agent memory with Supabase backup |
+| **Daily Self-Audit Report** | `0 22 * * *` | Nightly audit run |
 
 **Recreate via:**
 ```bash
 hermes cron add 0 21 * * *   # 1% Daily Revenue Cut
 hermes cron add 0 8 * * *    # Daily Sales Report
-hermes cron add 0 */2 * * *  # Health Check
+hermes cron add 0 9 * * 1    # Weekly Trend Report
+hermes cron add 0 22 * * *   # Daily Self-Audit Report
 ```
 
 ---
