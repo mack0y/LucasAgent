@@ -25,7 +25,7 @@ Replicates the SalesLog.jsx logic from https://mack0y.github.io/M-EFresheggs/ as
 
 ## Command: `-sale`
 
-**IMPORTANT `/sale` is intercepted by Hermes as "unknown command". Use the **dash-prefix** instead:
+**IMPORTANT `/sale` is intercepted by Hermes as "unknown command". Use the **dash-prefix** instead:**
 
 ```
 -sale 3 pcs Large
@@ -194,7 +194,7 @@ For batch operations or future scripts:
 ```
 # Upsert (insert or update on conflict)
 POST https://npohyeqnaltpqzmmlmej.supabase.co/rest/v1/hermes_memory_backup
-Headers: apikey, Authorization: Bearer <key>, Prefer: resolution=merge-duplicates,return=minimal
+Headers: apikey, Authorization: Bearer *** Prefer: resolution=merge-duplicates,return=minimal
 Body: { "category": "x", "key": "y", "content": "z" }
 
 # Delete by ID (proper syntax)
@@ -217,6 +217,12 @@ DELETE /rest/v1/table?or=(id.eq.uuid1,id.eq.uuid2,id.eq.uuid3)
 - **cost_per_egg in deliveries table = cost per tray** (mislabeled column)
 - **Cron:** A daily cron job ("1% Daily Revenue Cut") runs at 21:00 PHT to compute and record 1% of day's revenue as an operational fund. It uses the same PHT-aware date pattern (pitfall 8a) and includes guardrails: duplicate check, zero-amount check, sequential check+insert for idempotency.
 
+## Verification Loop Rules
+- **Always verify:** Every sale/delete/update must be followed by a verifier subagent pass before reporting to user.
+- **Live state only:** The verifier must query PHT date via `SELECT (CURRENT_DATE + INTERVAL '8 hours')::date::text as pht_today` and fetch current inventory. It must NEVER rely on hardcoded pre-insert dates or inventory quantities passed in context.
+- **Verdict on re-verified state:** If sale record exists and inventory deduction matches the operation, report `Validation Status: pass`. If not, report fail and stop for correction.
+- **Retry pattern:** Failure → fix → re-spawn verifier → loop until pass.
+
 ## References
 
 - `references/timezone-fix-and-cron-patterns.md` — MCP SQL timezone bug, fix pattern, cron job guardrails, real failure examples
@@ -229,7 +235,7 @@ DELETE /rest/v1/table?or=(id.eq.uuid1,id.eq.uuid2,id.eq.uuid3)
 3. TRAY_SIZE is always 30 - do not hardcode elsewhere
 4. Check stock BEFORE insert - prevent negative inventory
 5. cost_per_egg column in deliveries stores cost PER TRAY not per egg
-6. **Anon key is masked in config.yaml** — `Authorization: Bearer ***` appears redacted. Do NOT attempt to read the key from config files (search_files will timeout, cat shows `***`). For ALL write operations (INSERT/UPDATE/DELETE), use MCP SQL (`mcp_M_E_Fresh_Eggs_execute_sql`) directly.
+6. **Anon key is masked in config.yaml** — `Authorization: Bearer *** appears redacted. Do NOT attempt to read the key from config files (search_files will timeout, cat shows `***`). For ALL write operations (INSERT/UPDATE/DELETE), use MCP SQL (`mcp_M_E_Fresh_Eggs_execute_sql`) directly.
 7. **MCP SQL time syntax** — use `NOW()::time` for sale_time. For sale_date, follow pitfall 8a EXACTLY (do NOT use `CURRENT_DATE` directly). Do NOT use `AT TIME ZONE` syntax (causes 42601 error).
 8. **NO HALLUCINATED SALES** — Never insert a sale for a size/qty the user did not explicitly state. If user says "12 pcs Small", do NOT also insert a Jumbo sale. One request = one set of inserts.
 
@@ -249,10 +255,10 @@ DELETE /rest/v1/table?or=(id.eq.uuid1,id.eq.uuid2,id.eq.uuid3)
     **Real failure:** Sale #1066 (9 pcs Pullet, ₱58.50) was inserted at 6AM PHT using `CURRENT_DATE` → stored as Jun 26 instead of Jun 27 → invisible in web UI "Today" filter. User had to manually correct it.
     
     **Why:** Supabase runs on UTC. 12AM–8AM PHT = previous day UTC. The web app uses `getLocalDate()` with `toLocaleDateString('en-CA', {timeZone: 'Asia/Manila'})` which is always correct. MCP SQL has no timezone awareness — you must add the offset manually.
-8. **NO HALLUCINATED SALES** — Never insert a sale for a size/qty the user did not explicitly state. If user says "12 pcs Small", do NOT also insert a Jumbo sale. One request = one set of inserts.
-9. **NO DUPLICATES** — Before inserting, check if this exact sale was already processed in this conversation. If "Sale recorded: X" already appeared above, do NOT re-insert.
-8. **tray_size NULL for piece sales** — When unit='piece', omit tray_size from INSERT (defaults to NULL). Only set tray_size=30 when unit='tray'.
-9. **Multiple sales in one message** — User may send multiple sales in sequence (e.g. "1 tray small" then "12 pcs small"). Process each as a separate INSERT with its own stock check.
+9. **NO DUPLICATES** — Before inserting, check if this exact sale was already processed in this conversation. If "Sale recorded: X" already appeared above, do not re-insert.
+10. **tray_size NULL for piece sales** — When unit='piece', omit tray_size from INSERT (defaults to NULL). Only set tray_size=30 when unit='tray'.
+11. **Multiple sales in one message** — User may send multiple sales in sequence (e.g. "1 tray small" then "12 pcs small"). Process each as a separate INSERT with its own stock check.
+12. **Verification context must be live** — When spawning verifier, do not pass stale dates or inventory counts. Let the verifier query fresh state. Hardcoded expected values cause false failures.
 
 ## Usage Examples
 
