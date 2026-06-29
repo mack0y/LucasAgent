@@ -23,6 +23,15 @@ Replicates the SalesLog.jsx logic from https://mack0y.github.io/M-EFresheggs/ as
 6. **Egg size IDs:** Peewee=1, Pullet=2, Small=3, Medium=4, Large=5, Extra Large=6, Jumbo=7
 7. **Timezone:** PHT (UTC+8) for date/time stamping
 
+## Command Log Protocol
+- **Append-only log:** Every `-sale` command must be appended to `C:\Users\Maria101\.hermes\sales_commands.log` before any DB operation.
+- **Log format:** `[YYYY-MM-DD HH:MM:SS PHT] -sale <exact user input>`
+- **In-order execution:** Commands must be executed in the order they appear in the log. Never skip or reorder entries.
+- **Insert verification:** After DB insert, verify the sale row exists in Supabase with exact match: `egg_size_id`, `quantity`, `unit`, `total_amount` (from `price_settings`), and matches the command date/time window.
+- **Auto-retry:** If DB insert fails, retry once. If still failing, report the error and stop.
+- **Delete gating:** Before deleting any sale, verify the sale ID is tied to a logged command in the current session context. If not found in log context, block the delete and ask the user to confirm with the exact sale ID.
+- **Log recovery:** The log is the source of truth for what was requested. Use it to reconstruct missing sales when needed.
+
 ## Command: `-sale`
 
 **IMPORTANT `/sale` is intercepted by Hermes as "unknown command". Use the **dash-prefix** instead:**
