@@ -183,6 +183,23 @@ after_sale_insert: auto-deducts inventory on sale INSERT
 NO trigger on DELETE — must manually restore inventory
 ```
 
+### Prices (source of truth — price_settings)
+```
+Peewee  per piece 5.00  per tray 110.00
+Pullet  per piece 6.50  per tray 185.00
+Small   per piece 7.00  per tray 190.00
+Medium  per piece 7.50  per tray 210.00
+Large   per piece 8.50  per tray 245.00
+Extra Large per piece 9.00  per tray 260.00
+Jumbo   per piece 9.50  per tray 275.00
+```
+
+### Verification Loop
+- Every sale/delete/update is followed by a verifier pass before reporting to the user.
+- Verifier must compare live DB state against the user command exact-match: egg_size_id, quantity, unit, total_amount from price_settings.
+- No hardcoded pre-insert baselines; no silent partial acceptance.
+- Failure → fix → re-verify until pass.
+
 ### Expense Tracking Start
 ```
 EXPENSE_TRACKING_START = '2026-06-19'

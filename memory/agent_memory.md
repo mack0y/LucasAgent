@@ -62,8 +62,7 @@ Affected tables: sales, deliveries, expenses, spoilage, operational_funds.
 
 ---
 
-## Egg Size IDs
-
+## Egg Size IDs (Sales lookup base)
 | ID | Name |
 |----|------|
 | 1 | Peewee |
@@ -75,6 +74,18 @@ Affected tables: sales, deliveries, expenses, spoilage, operational_funds.
 | 7 | Jumbo |
 
 **TRAY_SIZE = 30**
+
+## Prices (from price_settings — source of truth)
+
+| Size | per piece | per tray |
+|------|-----------|----------|
+| Peewee | 5.00 | 110.00 |
+| Pullet | 6.50 | 185.00 |
+| Small | 7.00 | 190.00 |
+| Medium | 7.50 | 210.00 |
+| Large | 8.50 | 245.00 |
+| Extra Large | 9.00 | 260.00 |
+| Jumbo | 9.50 | 275.00 |
 
 ---
 
